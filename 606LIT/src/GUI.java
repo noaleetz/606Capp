@@ -15,6 +15,7 @@ public class GUI {
         int col = buttonNum/row;
         
         //Create a window
+        //Test comment
         JFrame jf = new JFrame("Press a button to cause every OTHER button to change background color");
         jf.setSize(800,800);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
