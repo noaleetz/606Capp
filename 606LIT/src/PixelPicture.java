@@ -15,10 +15,11 @@ import javax.swing.*;
  * The original image cannot be modified.
  */ 
 public class PixelPicture {
-
+	
+	private String imagePath;
     private BufferedImage bufferedImage;
     private WritableRaster raster;
-
+    private int avg;
     /**
      * Copies a NewPic.
      * 
@@ -31,7 +32,11 @@ public class PixelPicture {
                               BufferedImage.TYPE_INT_RGB);
 
         raster = bufferedImage.getRaster();
+        
         raster.setRect(other.bufferedImage.getRaster());
+    }
+    public int getAvg() {
+    	return this.avg;
     }
 
     /** 
@@ -40,8 +45,10 @@ public class PixelPicture {
      * @param filename the location of the image file to read
      */ 
     public PixelPicture(String filename) {
+    	this.imagePath = imagePath;
         load(filename);
     }
+    
 
     /**
      * Creates a picture given a bitmap. The bitmap should be in left-to-right,
@@ -86,6 +93,56 @@ public class PixelPicture {
 
         raster = bufferedImage.getRaster();
     }
+    public int getPixelA(int pixel) {
+    	return (pixel >> 24) & 0xff;
+    }
+    public int getPixelR(int pixel) {
+    	return (pixel >> 16) & 0xff;
+    }
+    public int getPixelG(int pixel) {
+    	return (pixel >> 8) & 0xff;
+    }
+    public int getPixelB(int pixel) {
+        return (pixel) & 0xff;
+    }
+    
+    
+    
+    public void printPixelARGB(int pixel) {
+        int alpha = (pixel >> 24) & 0xff;
+        int red = (pixel >> 16) & 0xff;
+        int green = (pixel >> 8) & 0xff;
+        int blue = (pixel) & 0xff;
+        System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
+      }
+    
+    public void getAveragePixelColor() {
+    	int alphaTotal = 0;
+    	int redTotal = 0;
+    	int greenTotal = 0;
+    	int blueTotal = 0;
+    	int totalNumPixels = this.getHeight()*this.getWidth();
+    	for (int i = 0; i < this.getHeight(); i++) {
+    	      for (int j = 0; j < this.getWidth(); j++) {
+//    	        System.out.println("x,y: " + j + ", " + i);
+    	        int pixel = bufferedImage.getRGB(j, i);
+//    	        printPixelARGB(pixel);
+//    	        System.out.println("");
+    	        alphaTotal += this.getPixelA(pixel);
+    	        redTotal += this.getPixelR(pixel);
+    	        greenTotal += this.getPixelG(pixel);
+    	        blueTotal += this.getPixelB(pixel);
+    	int alphaMakeup = alphaTotal/totalNumPixels;
+    	int redMakeup = redTotal/totalNumPixels;
+    	int greenMakeup = greenTotal/totalNumPixels;
+    	int blueMakeup = blueTotal/totalNumPixels;
+    	
+    	this.avg = (Integer) (((255-alphaMakeup)+redMakeup+greenMakeup+blueMakeup)/4);
+ 
+    	      }
+    	    }
+    }
+    	
 
     private void setBitmap(Pixel[][] bmp) {
         int w = bmp.length;
@@ -214,5 +271,10 @@ public class PixelPicture {
         }
 
     }
+	public String getFileName() {
+		// TODO Auto-generated method stub
+    	return this.imagePath;
+
+	}
 }
 
